@@ -21,4 +21,5 @@ jobs:
           pip install poetry
           poetry run pip install --upgrade pip
           poetry install
-          poetry run pytest --verbose --cov tests
+          ls
+          poetry run pytest --verbose --cov dqn_tictactoe

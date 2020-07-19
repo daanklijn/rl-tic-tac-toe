@@ -1,4 +1,4 @@
-from tictactoe_env import TicTacToeEnv
+from dqn_tictactoe.tictactoe_env import TicTacToeEnv
 from pytest import raises
 
 

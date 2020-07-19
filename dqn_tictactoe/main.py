@@ -1,7 +1,6 @@
 import ray
 import ray.rllib.agents.ppo as ppo
 import ray.rllib.agents.dqn as dqn
-from ray.tune.logger import pretty_print
 import wandb
 from tictactoe_env import TicTacToeEnv
 
