@@ -5,7 +5,7 @@ description = ""
 authors = ["Your Name <you@example.com>"]
 
 [tool.poetry.dependencies]
-python = "3.7"
+python = "3.7.7"
 ray = {version="0.8.6", extras=['rllib']}
 tensorflow = "2.1"
 tensorflow-estimator = "2.1"
