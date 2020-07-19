@@ -18,6 +18,9 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Test with pytest
         run: |
+          echo "Ignoring tensorflow dependencies..."
+          var=$( sed '/tensorflow/d' pyproject.toml )
+          echo $var > pyproject.toml
           pip install poetry
           poetry run pip install --upgrade pip
           poetry install
