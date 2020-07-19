@@ -23,7 +23,6 @@ jobs:
           mv pyproject2.toml pyproject.toml
           cat pyproject.toml
           pip install poetry
-          poetry add gym pytest pytest-cov
           poetry run pip install --upgrade pip
           poetry lock
           poetry install
