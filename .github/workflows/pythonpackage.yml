@@ -11,10 +11,11 @@ jobs:
         python-version: [3.7.7]
 
     steps:
-      - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
+      - uses: actions/checkout@v2
+      - uses: Gr1N/setup-poetry@v2
       - run: |
           ls
           echo "Ignoring tensorflow dependencies..."
@@ -25,5 +26,3 @@ jobs:
           poetry install
           poetry run ls
           poetry run pytest --cov dqn_tictactoe
-        env:
-          POETRY_VIRTUALENVS_PATH: /home/runner/work
