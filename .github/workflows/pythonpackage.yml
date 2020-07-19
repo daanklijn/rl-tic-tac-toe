@@ -27,4 +27,4 @@ jobs:
           poetry lock
           poetry install
           poetry run ls
-          poetry run pytest dqn_tictactoe
+          poetry run pytest .
