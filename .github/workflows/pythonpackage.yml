@@ -19,6 +19,6 @@ jobs:
       - name: Test with pytest
         run: |
           pip install poetry
-          poetry add gym pytest pytest-cov
+          poetry add gym
           poetry run python setup.py
           poetry run pytest dqn_tictactoe
