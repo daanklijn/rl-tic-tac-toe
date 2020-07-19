@@ -3,10 +3,6 @@ import random
 from gym.spaces import Discrete, Box
 from gym import Env
 
-from ray.rllib.env.multi_agent_env import MultiAgentEnv
-from ray.rllib.env import BaseEnv
-
-
 class TicTacToeEnv(Env):
     """Single-player environment for tic tac toe."""
 
@@ -21,6 +17,11 @@ class TicTacToeEnv(Env):
     NUMBER_FIELDS = 9
     BOARD_WIDTH = 3
 
+    LOSE_REWARD = -10
+    WIN_REWARD = 10
+    DRAW_REWARD = -1
+    WRONG_MOVE_REWARD = -1
+
     def __init__(self, config):
         self.action_space = Discrete(9)
         self.observation_space = Box(0, 2, [9])
@@ -33,10 +34,14 @@ class TicTacToeEnv(Env):
         self._save_board()
         return self.board
 
-    def step(self, action):
+    def step(self, action: int):
+        if action > self.NUMBER_FIELDS:
+            raise ValueError(
+                f"The action integer must be =< {self.BOARD_WIDTH}, got: {action}"
+            )
         rew = 0
         if self._field_is_filed(action):
-            rew = -1
+            rew = self.WRONG_MOVE_REWARD
         else:
             self.board[action] = self.X_SYMBOL
 
@@ -48,7 +53,6 @@ class TicTacToeEnv(Env):
             self._make_move()
 
         obs = self.board
-        done = self._board_is_full()
         self._save_board()
         return obs, rew, done, {}
 
@@ -65,10 +69,10 @@ class TicTacToeEnv(Env):
                            [self.board[2], self.board[4], self.board[6]]]
         for group in (horizontal_groups + vertical_groups + diagonal_groups):
             if group.count(self.X_SYMBOL) == self.BOARD_WIDTH:
-                return 10
+                return self.WIN_REWARD
             if group.count(self.O_SYMBOL) == self.BOARD_WIDTH:
-                return -10
-        return 0
+                return self.LOSE_REWARD
+        return self.DRAW_REWARD
 
     def _print_board(self, board):
         for i, field in enumerate(board):
@@ -81,7 +85,8 @@ class TicTacToeEnv(Env):
         self.board[field] = self.O_SYMBOL
 
     def _empty_fields(self):
-        return [i for i in self.board if i is self.EMPTY_SYMBOL]
+        return [i for i in range(self.NUMBER_FIELDS) if self.board[i] is
+                self.EMPTY_SYMBOL]
 
     def _field_is_filed(self, field_index):
         return self.board[field_index] != self.EMPTY_SYMBOL
