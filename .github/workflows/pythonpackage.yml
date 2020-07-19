@@ -18,7 +18,14 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Test with pytest
         run: |
+          echo "Ignoring tensorflow dependencies..."
+          sed '/tensorflow/d' pyproject.toml > pyproject2.toml
+          mv pyproject2.toml pyproject.toml
+          cat pyproject.toml
           pip install poetry
-          poetry add gym
-          poetry run python setup.py
+          poetry add gym pytest pytest-cov
+          poetry run pip install --upgrade pip
+          poetry lock
+          poetry install
+          poetry run ls
           poetry run pytest dqn_tictactoe
