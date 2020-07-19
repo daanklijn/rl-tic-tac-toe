@@ -19,9 +19,9 @@ jobs:
       - name: Test with pytest
         run: |
           echo "Ignoring tensorflow dependencies..."
-          var=$( sed '/tensorflow/d' pyproject.toml )
-          echo -e $var
-          echo -e $var > pyproject.toml
+          sed '/tensorflow/d' pyproject.toml > pyproject2.toml
+          mv pyproject2.toml pyproject.toml
+          cat pyrpoject.toml
           pip install poetry
           poetry run pip install --upgrade pip
           poetry lock
