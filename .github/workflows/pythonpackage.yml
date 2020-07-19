@@ -21,7 +21,7 @@ jobs:
           echo "Ignoring tensorflow dependencies..."
           sed '/tensorflow/d' pyproject.toml > pyproject2.toml
           mv pyproject2.toml pyproject.toml
-          cat pyrpoject.toml
+          cat pyproject.toml
           pip install poetry
           poetry run pip install --upgrade pip
           poetry lock
