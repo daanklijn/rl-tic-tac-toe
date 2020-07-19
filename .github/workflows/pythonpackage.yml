@@ -16,7 +16,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - uses: Gr1N/setup-poetry@v2
-        run: |
+      - run: |
           echo "Ignoring tensorflow dependencies..."
           sed '/tensorflow/d' pyproject.toml > pyproject2.toml
           mv pyproject2.toml pyproject.toml
