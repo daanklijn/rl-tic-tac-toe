@@ -20,8 +20,8 @@ jobs:
         run: |
           echo "Ignoring tensorflow dependencies..."
           var=$( sed '/tensorflow/d' pyproject.toml )
-          echo $var
-          echo $var > pyproject.toml
+          echo -e $var
+          echo -e $var > pyproject.toml
           pip install poetry
           poetry run pip install --upgrade pip
           poetry lock
