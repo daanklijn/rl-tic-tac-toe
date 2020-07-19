@@ -17,6 +17,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - uses: Gr1N/setup-poetry@v2
       - run: |
+          ls
           echo "Ignoring tensorflow dependencies..."
           sed '/tensorflow/d' pyproject.toml > pyproject2.toml
           mv pyproject2.toml pyproject.toml
@@ -25,3 +26,5 @@ jobs:
           poetry install
           poetry run ls
           poetry run pytest --cov dqn_tictactoe
+        env:
+          POETRY_VIRTUALENVS_PATH: /home/runner/work
