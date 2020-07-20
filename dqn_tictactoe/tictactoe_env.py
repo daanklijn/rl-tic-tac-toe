@@ -42,9 +42,11 @@ class TicTacToeEnv(Env):
         rew = 0
         if self._field_is_filed(action):
             rew = self.WRONG_MOVE_REWARD
-        else:
-            self.board[action] = self.X_SYMBOL
+            obs = self.board
+            done = False
+            return obs, rew, done, {}
 
+        self.board[action] = self.X_SYMBOL
         done = self._board_is_full()
         if done:
             rew = self._evaluate_board()
