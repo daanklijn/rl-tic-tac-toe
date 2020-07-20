@@ -61,7 +61,7 @@ class TicTacToeEnv(Env):
 
     def _evaluate_board(self):
         # somehow scores for horizontal wins not right
-        horizontal_groups = [self.board[0:2], self.board[3:5], self.board[6:8]]
+        horizontal_groups = [self.board[0:3], self.board[3:6], self.board[6:9]]
         vertical_groups = [[self.board[0], self.board[3], self.board[6]],
                            [self.board[1], self.board[4], self.board[7]],
                            [self.board[2], self.board[5], self.board[8]]]

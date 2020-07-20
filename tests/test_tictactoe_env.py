@@ -21,10 +21,12 @@ def test_making_invalid_action():
     obs, rew, done, _ = env.step(0)
     assert rew == -1
 
+
 def test_action_greater_than_board_fields_raises_value_error():
     env = TicTacToeEnv({})
     with raises(ValueError):
-        env.step(env.NUMBER_FIELDS+1)
+        env.step(env.NUMBER_FIELDS + 1)
+
 
 def test_game_is_over_after_5_steps():
     env = TicTacToeEnv({})
@@ -43,3 +45,41 @@ def test_receives_reward_when_game_is_over():
     assert rew in [env.DRAW_REWARD, env.LOSE_REWARD, env.WIN_REWARD]
 
 
+def test_vertical_win_evaluation():
+    env = TicTacToeEnv({})
+    env.board = [
+        TicTacToeEnv.X_SYMBOL, TicTacToeEnv.EMPTY_SYMBOL, TicTacToeEnv.EMPTY_SYMBOL,
+        TicTacToeEnv.X_SYMBOL, TicTacToeEnv.EMPTY_SYMBOL, TicTacToeEnv.EMPTY_SYMBOL,
+        TicTacToeEnv.X_SYMBOL, TicTacToeEnv.EMPTY_SYMBOL, TicTacToeEnv.EMPTY_SYMBOL,
+    ]
+    assert env.WIN_REWARD == env._evaluate_board()
+
+
+def test_horizontal_win_evaluation():
+    env = TicTacToeEnv({})
+    env.board = [
+        TicTacToeEnv.X_SYMBOL, TicTacToeEnv.X_SYMBOL, TicTacToeEnv.X_SYMBOL,
+        TicTacToeEnv.EMPTY_SYMBOL, TicTacToeEnv.EMPTY_SYMBOL, TicTacToeEnv.EMPTY_SYMBOL,
+        TicTacToeEnv.EMPTY_SYMBOL, TicTacToeEnv.EMPTY_SYMBOL, TicTacToeEnv.EMPTY_SYMBOL,
+    ]
+    assert env.WIN_REWARD == env._evaluate_board()
+
+
+def test_diagonal_win_evaluation():
+    env = TicTacToeEnv({})
+    env.board = [
+        TicTacToeEnv.X_SYMBOL, TicTacToeEnv.EMPTY_SYMBOL, TicTacToeEnv.EMPTY_SYMBOL,
+        TicTacToeEnv.EMPTY_SYMBOL, TicTacToeEnv.X_SYMBOL, TicTacToeEnv.EMPTY_SYMBOL,
+        TicTacToeEnv.EMPTY_SYMBOL, TicTacToeEnv.EMPTY_SYMBOL, TicTacToeEnv.X_SYMBOL,
+    ]
+    assert env.WIN_REWARD == env._evaluate_board()
+
+
+def test_draw_evaluation():
+    env = TicTacToeEnv({})
+    env.board = [
+        TicTacToeEnv.X_SYMBOL, TicTacToeEnv.O_SYMBOL, TicTacToeEnv.X_SYMBOL,
+        TicTacToeEnv.X_SYMBOL, TicTacToeEnv.O_SYMBOL, TicTacToeEnv.X_SYMBOL,
+        TicTacToeEnv.O_SYMBOL, TicTacToeEnv.X_SYMBOL, TicTacToeEnv.O_SYMBOL,
+    ]
+    assert env.DRAW_REWARD == env._evaluate_board()
