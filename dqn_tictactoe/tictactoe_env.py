@@ -2,6 +2,8 @@ import random
 
 from gym.spaces import Discrete, Box
 from gym import Env
+import numpy as np
+
 
 class TicTacToeEnv(Env):
     """Single-player environment for tic tac toe."""
@@ -20,19 +22,22 @@ class TicTacToeEnv(Env):
     LOSE_REWARD = -10
     WIN_REWARD = 10
     DRAW_REWARD = -1
-    WRONG_MOVE_REWARD = -1
 
     def __init__(self, config):
         self.action_space = Discrete(9)
         self.observation_space = Box(0, 2, [9])
         self.reset()
         self.history = []
+        self.verbose = False
 
     def reset(self):
         self._init_board()
         self.history = []
         self._save_board()
-        return self.board
+        return self._obs()
+
+    def set_verbose(self):
+        self.verbose = True
 
     def step(self, action: int):
         if action > self.NUMBER_FIELDS:
@@ -41,8 +46,9 @@ class TicTacToeEnv(Env):
             )
         rew = 0
         if self._field_is_filed(action):
-            rew = self.WRONG_MOVE_REWARD
-            obs = self.board
+            rew = -1
+            # self.LOSE_REWARD
+            obs = self._obs()
             done = False
             return obs, rew, done, {}
 
@@ -54,9 +60,15 @@ class TicTacToeEnv(Env):
         else:
             self._make_move()
 
-        obs = self.board
+        obs = self._obs()
         self._save_board()
+        if self.verbose:
+            self._print_board(self.board)
+            print(f"\n\n-----|{done}|--|{rew}|-----")
         return obs, rew, done, {}
+
+    def _obs(self):
+        return np.array(self.board)
 
     def _save_board(self):
         self.history.append(self.board.copy())
@@ -103,4 +115,4 @@ class TicTacToeEnv(Env):
         for i, board in enumerate(self.history):
             print(f"\n\n---ROUND-{i}---")
             self._print_board(board)
-        print("\nSCORE: "+str(self._evaluate_board()))
+        print("\nSCORE: " + str(self._evaluate_board()))
