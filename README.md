@@ -41,11 +41,11 @@ The heuristic a greedy heuristic that simply goes over the fields of the Tic-Tac
 
 Below the results of various Reinforcement Learning Algorithms playing against the heuristic can be found. Here the PPO, PG and DQN seem to converge to the optimum score per episode of 10, although the DQN seems to be much more unstable than the PPO and PG. The A3C's performance against the heuristic is increasing during the training but was not able to get better than the heuristic within the first 10K episode. 
 
-<img width="800" src="https://raw.githubusercontent.com/daanklijn/rl-tic-tac-toe/master/results/PG.png">
-<img width="800" src="https://raw.githubusercontent.com/daanklijn/rl-tic-tac-toe/master/results/A3C.png">
-<img width="800" src="https://raw.githubusercontent.com/daanklijn/rl-tic-tac-toe/master/results/DQN.png">
-<img width="800" src="https://raw.githubusercontent.com/daanklijn/rl-tic-tac-toe/master/results/PPO.png">
-<img width="800" src="https://raw.githubusercontent.com/daanklijn/rl-tic-tac-toe/master/results/ALL.png">
+<img width="800" src="/results/PG.png">
+<img width="800" src="/results/A3C.png">
+<img width="800" src="/results/DQN.png">
+<img width="800" src="/results/PPO.png">
+<img width="800" src="/results/ALL.png">
 
 
 
