@@ -7,8 +7,6 @@ authors = ["Your Name <you@example.com>"]
 [tool.poetry.dependencies]
 python = "3.7.7"
 ray = {version="0.8.6", extras=['rllib']}
-tensorflow = "2.1"
-tensorflow-estimator = "2.1"
 wandb = "^0.9.3"
 pytest = "^5.4.3"
 pytest-cov = "^2.10.0"

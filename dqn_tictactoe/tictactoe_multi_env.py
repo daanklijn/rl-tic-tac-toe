@@ -7,7 +7,7 @@ import numpy as np
 
 
 class TicTacToeMultiEnv(MultiAgentEnv):
-    """Single-player environment for tic tac toe."""
+    """Multi-agent environment for tic tac toe."""
 
     EMPTY_SYMBOL = 0
     X_SYMBOL = 1
@@ -35,17 +35,20 @@ class TicTacToeMultiEnv(MultiAgentEnv):
     USER_SYMBOL_INDEX = NUMBER_FIELDS + 1
     USER_TURN_INDEX = NUMBER_FIELDS
 
+    ACTION_SPACE = Discrete(ACTION_SPACE_SIZE)
+    OBSERVATION_SPACE = Box(0, 2, [OBSERVATION_SPACE_SIZE])
+
     LOSE_REWARD = -10
     WIN_REWARD = 10
     DRAW_REWARD = -1
 
     BAD_MOVE_REWARD = -1
-    GOOD_MOVE_REWARD = 1
+    GOOD_MOVE_REWARD = 0
 
     def __init__(self, config):
-        self.action_space = Discrete(self.ACTION_SPACE_SIZE)
-        self.observation_space = Box(0, 2, [self.OBSERVATION_SPACE_SIZE])
-        self.turn = self.X_SYMBOL
+        self.action_space = self.ACTION_SPACE
+        self.observation_space = self.OBSERVATION_SPACE
+        self.turn = random.choice([self.X_SYMBOL, self.O_SYMBOL])
         self.reset()
         self.history = []
         self.verbose = False
@@ -63,7 +66,7 @@ class TicTacToeMultiEnv(MultiAgentEnv):
         rew, invalid = self._action_rewards(action)
 
         if invalid:
-            return self._obs(), rew, False, {}
+            return self._obs(), rew, self._done(False), {}
 
         self._perform_actions(action)
         done = self._is_done()
@@ -75,7 +78,7 @@ class TicTacToeMultiEnv(MultiAgentEnv):
         self._change_turn()
         self._save_board()
         self._print_if_verbose(done, rew)
-        return self._obs(), rew, done, {}
+        return self._obs(), rew, self._done(done), {}
 
     def _is_done(self):
         has_winner = self._get_winner() is not None
@@ -87,6 +90,9 @@ class TicTacToeMultiEnv(MultiAgentEnv):
             self.X_SYMBOL: np.array(self.board + [self.turn, self.X_SYMBOL]),
             self.O_SYMBOL: np.array(self.board + [self.turn, self.O_SYMBOL])
         }
+
+    def _done(self, done):
+        return {self.X_SYMBOL: done, self.O_SYMBOL: done, '__all__': done}
 
     def _action_rewards(self, action):
         rew = {}
@@ -103,11 +109,11 @@ class TicTacToeMultiEnv(MultiAgentEnv):
     def _valid_action(self, action, player_id):
         self._validate_action_space(action)
 
-        # Waiting while it's players turn.
+        # Waiting while it's the players turn.
         if self.turn == player_id and action == self.WAIT_MOVE:
             return False
 
-        # Playing while it's not players turn.
+        # Playing while it's not the players turn.
         if self.turn != player_id and action != self.WAIT_MOVE:
             return False
 

@@ -1,30 +1,42 @@
-import ray
-import ray.rllib.agents.ppo as ppo
-import ray.rllib.agents.dqn as dqn
+import ray.rllib.agents
 import wandb
-from tictactoe_env import TicTacToeEnv
+from ray.rllib.agents.registry import get_agent_class
 
-ray.init(include_webui=False)
-config = ppo.DEFAULT_CONFIG.copy()
-config["num_gpus"] = 0
-config["num_workers"] = 1
-config["eager"] = False
+from dqn_tictactoe.first_empty_field_policy import FirstEmptyFieldPolicy
+from dqn_tictactoe.tictactoe_multi_env import TicTacToeMultiEnv
 
-# maybe pass in more than only model config, also env settings
-wandb.init(project="rl-tic-tac-toe", config=config['model'])
-trainer = dqn.DQNTrainer(config=dqn.DEFAULT_CONFIG, env=TicTacToeEnv)
-# trainer = ppo.PPOTrainer(config=config, env=TicTacToeEnv)
+wandb.init(project='dqn-tic-tac-toe')
+ray.init()
 
-# Can optionally call trainer.restore(path) to load a checkpoint.
+trainer = 'A3C'
+trained_policy = trainer + '_policy'
 
-for i in range(1000):
-    # Perform one iteration of training the policy with PPO
-    result = trainer.train()
-    result_dict = {k: v for (k, v) in result.items() if not isinstance(v, dict)}
-    wandb.log(result_dict)
-    print(trainer.workers.local_worker().env._print_history())
-    print("AVG REWARD: "+str(result_dict['episode_reward_mean']))
+def policy_mapping_fn(agent_id):
+    mapping = {TicTacToeMultiEnv.O_SYMBOL: trained_policy,
+               TicTacToeMultiEnv.X_SYMBOL: "heuristic"}
+    return mapping[agent_id]
 
-    if i % 100 == 0:
-        checkpoint = trainer.save()
-        print("checkpoint saved at", checkpoint)
+config = {
+    "env": TicTacToeMultiEnv,
+    "multiagent": {
+        "policies_to_train": [trained_policy],
+        "policies": {
+            trained_policy: (None, TicTacToeMultiEnv.OBSERVATION_SPACE,
+                           TicTacToeMultiEnv.ACTION_SPACE, {}),
+            "heuristic": (FirstEmptyFieldPolicy, TicTacToeMultiEnv.OBSERVATION_SPACE,
+                          TicTacToeMultiEnv.ACTION_SPACE, {}),
+        },
+        "policy_mapping_fn": policy_mapping_fn
+    },
+}
+
+cls = get_agent_class(trainer) if isinstance(trainer, str) else trainer
+trainer_obj = cls(config=config)
+env = trainer_obj.workers.local_worker().env
+
+while True:
+    results = trainer_obj.train()
+    results.pop('config')
+    wandb.log(results)
+    if results['episodes_total'] > 10000:
+        break
